@@ -3,11 +3,17 @@
 #include <netinet/in.h>
 #include <string.h>
 
+
+
+
 int main(int argc, char * argv[]){
 
 //printf("%s \n", argv[1]);
 
-  
+  if (argc < 2){
+    printf ("Usage: ./clinet message\n");
+  }
+ 
   int clientSocket;
   char buffer[1024];
   struct sockaddr_in serverAddr;
