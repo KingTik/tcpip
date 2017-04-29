@@ -6,6 +6,12 @@
 #include <string.h>
 #include <libconfig.h>
 
+/**
+* funkcja zwraca wartosci z pliku konfiguracyjnego
+* @param const chat *c:
+    - port
+    -max_client
+*/
 int get_int_from_settings(config_t cfg, const char *c){
   int ret_value;
 
@@ -18,31 +24,51 @@ int get_int_from_settings(config_t cfg, const char *c){
 
 }
 
+/*
+1 - quit
+0 - display
+
+*/
+
+int message_handle(const char *message){
+
+  if( !strcmp(message, "quit") ){
+    return 1;
+  }else{
+    return 0;
+  }
+
+
+}
+
+
 int main(){
 
   config_t cfg;
   config_setting_t *setting;
   const char *str;
   int max_client, tmp, port;
+  int run = 1;
 
   config_init(&cfg);
 
-
+  // sprawdzenie czy jest plik konfiguracjny
   if(! config_read_file(&cfg, "konfiguracja.cfg"))
   {
     fprintf(stderr, "%s:%d - %s\n", config_error_file(&cfg), config_error_line(&cfg), config_error_text(&cfg));
     config_destroy(&cfg);
     printf("nie ma pliku konfiguracyjnego");
+    //jak nie ma to wartosci domyslne
     port = 7891;
     max_client = 3;
+  }else{
+    //jak jest to pobieramy wartosci z pliku konfiguracyjnego
+    max_client = get_int_from_settings(cfg, "max_client");
+    port = get_int_from_settings(cfg, "port");
+    
   }
 
-  max_client = get_int_from_settings(cfg, "max_client");
-  port = get_int_from_settings(cfg, "port");
   printf ("port: %d   \nmaksymalna liczba klientow: %d\n", port, max_client);
-
-
-
 
 
   
@@ -64,7 +90,7 @@ int main(){
   
   bind(welcomeSocket, (struct sockaddr *) &serverAddr, sizeof(serverAddr));
 
-  while(1){
+  while(run == 1 ){
     if(listen(welcomeSocket,5)==0)
       printf("Listening\n");
     else
@@ -76,14 +102,31 @@ int main(){
 
     recv(newSocket, buffer, 1024, 0);
 
-    if( !strcmp(buffer, "quit") ){
-      printf("bye bye \n");
+    switch (message_handle(buffer))
+    {
+    case 0:
+      printf("Data received: %s \n",buffer);
       break;
-    }else{
-
-      printf("Data received: %s \n",buffer);  
+    case 1:
+      run =0;
+      break; 
+    
+    default:
+      printf("wait what\n");
+      break;
     }
 
+/*
+
+    if( !strcmp(buffer, "quit") ){
+      printf("bye bye \n");
+      run = 0;
+    }else{
+
+      printf("Data received: %s \n",buffer);
+
+    }
+*/
   }
   close(welcomeSocket);
   config_destroy(&cfg);
@@ -95,7 +138,6 @@ int main(){
 TO DO:
 - komunikacja w 2 strony
 - kilku klientow
-- plik config DONE
 - protokol
 - wystawienie interface'ow
 - zobaczyc na warningi
