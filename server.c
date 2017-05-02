@@ -25,6 +25,7 @@ int get_int_from_settings(config_t cfg, const char *c){
 }
 
 /*
+2 - send back hello
 1 - quit
 0 - display
 
@@ -34,6 +35,8 @@ int message_handle(const char *message){
 
   if( !strcmp(message, "quit") ){
     return 1;
+  }else if(!strcmp(message, "hi")){
+    return 2;
   }else{
     return 0;
   }
@@ -108,9 +111,13 @@ int main(){
       printf("Data received: %s \n",buffer);
       break;
     case 1:
+      close(welcomeSocket);
+      config_destroy(&cfg);
       run =0;
       break; 
-    
+    case 2:
+      send(newSocket,"hi yourself\n",13,0);
+      break;
     default:
       printf("wait what\n");
       break;
@@ -128,8 +135,7 @@ int main(){
     }
 */
   }
-  close(welcomeSocket);
-  config_destroy(&cfg);
+  
   return 0;
 }
 

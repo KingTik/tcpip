@@ -4,7 +4,7 @@
 #include <string.h>
 
 
-
+#define BUFFER_SIZE 1024
 
 int main(int argc, char * argv[]){
 
@@ -19,7 +19,7 @@ int main(int argc, char * argv[]){
   char buffer[1024];
   struct sockaddr_in serverAddr;
   socklen_t addr_size;
-
+  size_t status;
 
   clientSocket = socket(PF_INET, SOCK_STREAM, 0);
   serverAddr.sin_family = AF_INET;
@@ -31,14 +31,28 @@ int main(int argc, char * argv[]){
   addr_size = sizeof serverAddr;
   
   connect(clientSocket, (struct sockaddr *) &serverAddr, addr_size);
-  
-  //recv(clientSocket, buffer, 1024, 0);
-  
-  //printf("Data received: %s",buffer);   
+    
 
   strcpy(buffer,argv[1]);
-  send(clientSocket,buffer,13,0);
+  
 
+  while(1){
+  
+    send(clientSocket,buffer,13,0);
+    status = recv(clientSocket, buffer, 1024, 0);
+    
+    if(status > 0){
+      printf("Odpowiedz servera: %s",buffer); 
+    }
+    
+    printf("%s\n" ,buffer);
+    if(!strcmp(buffer, "quit")){
+      return 0;
+    }  
+    memset(buffer,'\0', BUFFER_SIZE);
+    scanf("%s", buffer);
+    //
+  }
 
   return 0;
 }
