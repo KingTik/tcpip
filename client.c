@@ -8,14 +8,10 @@
 
 int main(int argc, char * argv[]){
 
-//printf("%s \n", argv[1]);
 
-  if (argc < 2){
-    printf ("Usage: ./clinet message\n");
-    return -1;
-  }
+
  
-  int clientSocket;
+  int clientSocket, read_size;
   char buffer[1024];
   struct sockaddr_in serverAddr;
   socklen_t addr_size;
@@ -32,27 +28,30 @@ int main(int argc, char * argv[]){
   
   connect(clientSocket, (struct sockaddr *) &serverAddr, addr_size);
     
-
-  strcpy(buffer,argv[1]);
-  
-
-  while(1){
-  
-    send(clientSocket,buffer,13,0);
-    status = recv(clientSocket, buffer, 1024, 0);
-    
-    if(status > 0){
-      printf("Odpowiedz servera: %s",buffer); 
-    }
-    
-    printf("%s\n" ,buffer);
-    if(!strcmp(buffer, "quit")){
-      return 0;
-    }  
-    memset(buffer,'\0', BUFFER_SIZE);
+  int i = 0;
+  for(i=0; i<4; i++){
     scanf("%s", buffer);
-    //
+
+    if( !strcmp(buffer, "quit") ){
+      close(clientSocket);
+      return 0;
+    }
+
+    send(clientSocket,buffer,13,0);
+    memset(buffer,'\0', BUFFER_SIZE);
+
+    if( recv(clientSocket, buffer , 1024 , 0) < 0){
+        //puts("recv failed");
+        break;
+      }
+         
+        puts("Server reply :");
+        puts(buffer);
   }
+
+
+  close(clientSocket);
+  
 
   return 0;
 }

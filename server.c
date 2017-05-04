@@ -50,7 +50,7 @@ int main(){
   config_t cfg;
   config_setting_t *setting;
   const char *str;
-  int max_client, tmp, port;
+  int max_client, tmp, port, read_size;
   int run = 1;
 
   config_init(&cfg);
@@ -92,49 +92,44 @@ int main(){
 
   
   bind(welcomeSocket, (struct sockaddr *) &serverAddr, sizeof(serverAddr));
-
-  while(run == 1 ){
+  
     if(listen(welcomeSocket,5)==0)
       printf("Listening\n");
     else
       printf("Error\n");
+ 
+  
 
-    
-    addr_size = sizeof serverStorage;
+
+
     newSocket = accept(welcomeSocket, (struct sockaddr *) &serverStorage, &addr_size);
+    addr_size = sizeof serverStorage;
+    
+    
+    while( (read_size = recv(newSocket, buffer, 1024, 0)) >0 ){
 
-    recv(newSocket, buffer, 1024, 0);
-
-    switch (message_handle(buffer))
-    {
-    case 0:
-      printf("Data received: %s \n",buffer);
-      break;
-    case 1:
-      close(welcomeSocket);
-      config_destroy(&cfg);
-      run =0;
-      break; 
-    case 2:
-      send(newSocket,"hi yourself\n",13,0);
-      break;
-    default:
-      printf("wait what\n");
-      break;
+      switch (message_handle(buffer))
+      {
+      case 0:
+        write(newSocket,"thats nice sweety\n",17,0);
+        printf("Data received: %s \n",buffer);
+        break;
+      case 1:
+        close(welcomeSocket);
+        config_destroy(&cfg);
+        return 0;
+        break; 
+      case 2:
+        //send(newSocket,"hi yourself\n",13,0);
+        write(newSocket,"hi yourself\n",13,0);
+        break;
+      default:
+        printf("wait what\n");// nie powinno nigdy to wejsc
+        break;
+      }
     }
 
-/*
-
-    if( !strcmp(buffer, "quit") ){
-      printf("bye bye \n");
-      run = 0;
-    }else{
-
-      printf("Data received: %s \n",buffer);
-
-    }
-*/
-  }
+  
   
   return 0;
 }
