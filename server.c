@@ -1,10 +1,12 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <string.h>
 #include <libconfig.h>
+#include <pthread.h>
 
 /**
 * funkcja zwraca wartosci z pliku konfiguracyjnego
@@ -44,6 +46,56 @@ int message_handle(const char *message){
     return 0;
   }
 
+}
+
+
+void *connection_handle(void *newSocket){
+
+  int socket = *(int*) newSocket;
+  int read_size;
+  char buffer[1024];
+
+  while( (read_size = recv(socket, buffer, 1024, 0)) >0 ){
+    printf("%s\n", buffer);
+    if( !strcmp(buffer, "quit") ){
+        close(socket);
+        free(newSocket);
+      //return 1;
+    }else if(!strcmp(buffer, "hi")){
+      write(socket,"hi yourself\n",13,0);
+      //return 2;
+    }else if(!strcmp(buffer, "help")){
+      write(socket,"quit\nhi\nhelp\n*",17,0);
+      //return 3;
+    }else{
+      write(socket,"thats nice sweety\n",17,0);
+      //return 0;
+    }
+/*
+      switch (message_handle(buffer))
+      {
+      case 0:
+        write(newSocket,"thats nice sweety\n",17,0);
+        //printf("Data received: %s \n",buffer);
+        break;
+      case 1:
+        close(socket);
+        free(newSocket);
+        //config_destroy(&cfg);
+        return 0;
+        break; 
+      case 2:
+        write(socket,"hi yourself\n",13,0);
+        break;
+      case 3:
+        write(socket,"quit\nhi\nhelp\n*",17,0);
+        break;
+      default:
+        printf("wait what\n");// nie powinno nigdy to wejsc
+        break;
+      } */
+    }
+   
 
 }
 
@@ -83,6 +135,7 @@ int main(){
   struct sockaddr_in serverAddr;
   struct sockaddr_storage serverStorage;
   socklen_t addr_size;
+  int *thread_sock;
 
   
   welcomeSocket = socket(PF_INET, SOCK_STREAM, 0);
@@ -105,10 +158,29 @@ int main(){
 
 
 
-    newSocket = accept(welcomeSocket, (struct sockaddr *) &serverStorage, &addr_size);
-    addr_size = sizeof serverStorage;
+    //newSocket = accept(welcomeSocket, (struct sockaddr *) &serverStorage, &addr_size);
+    addr_size = sizeof(struct sockaddr_in);
     
-    
+
+    while( (newSocket = accept(welcomeSocket, (struct sockaddr *)&serverStorage, (socklen_t*)&addr_size)) )
+    {
+        
+         puts("Connection accepted");
+        pthread_t new_thread;
+        thread_sock = malloc(1);
+        *thread_sock = newSocket;
+         
+        if( pthread_create( &new_thread , NULL ,  connection_handle , (void*) thread_sock) < 0)
+        {
+            perror("could not create thread");
+            return 1;
+        }
+         
+
+        
+    }
+
+    /*
     while( (read_size = recv(newSocket, buffer, 1024, 0)) >0 ){
 
       switch (message_handle(buffer))
@@ -123,7 +195,6 @@ int main(){
         return 0;
         break; 
       case 2:
-       
         write(newSocket,"hi yourself\n",13,0);
         break;
       case 3:
@@ -134,7 +205,7 @@ int main(){
         break;
       }
     }
-
+    */
   
   
   return 0;

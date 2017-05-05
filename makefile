@@ -2,7 +2,7 @@ all: server client
 
 
 server: server.c
-	gcc server.c -o server -l:libconfig.a 
+	gcc server.c -o server -l:libconfig.a -lpthread
 
 client: client.c
 	gcc client.c -o client
