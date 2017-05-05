@@ -60,41 +60,19 @@ void *connection_handle(void *newSocket){
     if( !strcmp(buffer, "quit") ){
         close(socket);
         free(newSocket);
-      //return 1;
+      
     }else if(!strcmp(buffer, "hi")){
       write(socket,"hi yourself\n",13,0);
-      //return 2;
+      
     }else if(!strcmp(buffer, "help")){
       write(socket,"quit\nhi\nhelp\n*",17,0);
-      //return 3;
+      
     }else{
       write(socket,"thats nice sweety\n",17,0);
-      //return 0;
+      
     }
-/*
-      switch (message_handle(buffer))
-      {
-      case 0:
-        write(newSocket,"thats nice sweety\n",17,0);
-        //printf("Data received: %s \n",buffer);
-        break;
-      case 1:
-        close(socket);
-        free(newSocket);
-        //config_destroy(&cfg);
-        return 0;
-        break; 
-      case 2:
-        write(socket,"hi yourself\n",13,0);
-        break;
-      case 3:
-        write(socket,"quit\nhi\nhelp\n*",17,0);
-        break;
-      default:
-        printf("wait what\n");// nie powinno nigdy to wejsc
-        break;
-      } */
-    }
+
+  }
    
 
 }
@@ -179,33 +157,6 @@ int main(){
 
         
     }
-
-    /*
-    while( (read_size = recv(newSocket, buffer, 1024, 0)) >0 ){
-
-      switch (message_handle(buffer))
-      {
-      case 0:
-        write(newSocket,"thats nice sweety\n",17,0);
-        printf("Data received: %s \n",buffer);
-        break;
-      case 1:
-        close(welcomeSocket);
-        config_destroy(&cfg);
-        return 0;
-        break; 
-      case 2:
-        write(newSocket,"hi yourself\n",13,0);
-        break;
-      case 3:
-        write(newSocket,"quit\nhi\nhelp\n*",17,0);
-        break;
-      default:
-        printf("wait what\n");// nie powinno nigdy to wejsc
-        break;
-      }
-    }
-    */
   
   
   return 0;
@@ -215,11 +166,12 @@ int main(){
 /*
 TO DO:
 
-- kilku klientow
+
 - protokol
 - wystawienie interface'ow
 - zobaczyc na warningi
-- zrobic server jako demon (+logi)
+- logi
+- zrobic server jako demon
 - 
 
 */
