@@ -25,6 +25,7 @@ int get_int_from_settings(config_t cfg, const char *c){
 }
 
 /*
+3 - list of commands
 2 - send back hello
 1 - quit
 0 - display
@@ -37,6 +38,8 @@ int message_handle(const char *message){
     return 1;
   }else if(!strcmp(message, "hi")){
     return 2;
+  }else if(!strcmp(message, "help")){
+    return 3;
   }else{
     return 0;
   }
@@ -85,7 +88,7 @@ int main(){
   welcomeSocket = socket(PF_INET, SOCK_STREAM, 0);
   
   serverAddr.sin_family = AF_INET;
-  serverAddr.sin_port = htons(7891);
+  serverAddr.sin_port = htons(port);
   serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
   
   memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);  
@@ -93,7 +96,7 @@ int main(){
   
   bind(welcomeSocket, (struct sockaddr *) &serverAddr, sizeof(serverAddr));
   
-    if(listen(welcomeSocket,5)==0)
+    if(listen(welcomeSocket,max_client)==0)
       printf("Listening\n");
     else
       printf("Error\n");
@@ -120,8 +123,11 @@ int main(){
         return 0;
         break; 
       case 2:
-        //send(newSocket,"hi yourself\n",13,0);
+       
         write(newSocket,"hi yourself\n",13,0);
+        break;
+      case 3:
+        write(newSocket,"quit\nhi\nhelp\n*",17,0);
         break;
       default:
         printf("wait what\n");// nie powinno nigdy to wejsc
@@ -137,7 +143,7 @@ int main(){
 
 /*
 TO DO:
-- komunikacja w 2 strony
+
 - kilku klientow
 - protokol
 - wystawienie interface'ow

@@ -29,7 +29,7 @@ int main(int argc, char * argv[]){
   connect(clientSocket, (struct sockaddr *) &serverAddr, addr_size);
     
   int i = 0;
-  for(i=0; i<4; i++){
+  while(1){
     scanf("%s", buffer);
 
     if( !strcmp(buffer, "quit") ){
