@@ -2,6 +2,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <arpa/inet.h>
 
 
 #define BUFFER_SIZE 1024
@@ -32,7 +33,7 @@ int main(int argc, char * argv[]){
   while(1){
     scanf("%s", buffer);
 
-    if( !strcmp(buffer, "quit") ){
+    if( !strcmp(buffer, "quit") || !strcmp(buffer, "kill") ){
       close(clientSocket);
       return 0;
     }

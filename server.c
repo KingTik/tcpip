@@ -7,6 +7,8 @@
 #include <string.h>
 #include <libconfig.h>
 #include <pthread.h>
+#include <arpa/inet.h>
+//#include <unistd.h>
 
 /**
 * funkcja zwraca wartosci z pliku konfiguracyjnego
@@ -65,8 +67,13 @@ void *connection_handle(void *newSocket){
       write(socket,"hi yourself\n",13,0);
       
     }else if(!strcmp(buffer, "help")){
-      write(socket,"quit\nhi\nhelp\n*",17,0);
+      char msg[] = "quit\nkill\nhi\nhelp\n*";
+      write(socket,msg ,strlen(msg)+1,0);
       
+    }else if(!strcmp(buffer, "kill")){
+        close(socket);
+        free(newSocket);
+        exit(1);
     }else{
       write(socket,"thats nice sweety\n",17,0);
       
