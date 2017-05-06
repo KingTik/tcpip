@@ -50,6 +50,7 @@ int message_handle(const char *message){
 
 }
 
+// /sbin/ifconfig $(netstat -nr | tail -1 | awk '{print $NF}') | grep -oP '(?<=inet\s)\d+(\.\d+){3}' <- ip address
 
 void *connection_handle(void *newSocket){
 
