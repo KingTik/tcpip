@@ -33,14 +33,16 @@ int main(int argc, char * argv[]){
   while(1){
     scanf("%s", buffer);
 
+
+
+    send(clientSocket,buffer,13,0);
+   
+
     if( !strcmp(buffer, "quit") || !strcmp(buffer, "kill") ){
       close(clientSocket);
       return 0;
     }
-
-    send(clientSocket,buffer,13,0);
-    memset(buffer,'\0', BUFFER_SIZE);
-
+     memset(buffer,'\0', BUFFER_SIZE);
     if( recv(clientSocket, buffer , 1024 , 0) < 0){
         //puts("recv failed");
         break;
