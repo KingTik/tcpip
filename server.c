@@ -71,11 +71,7 @@ void *connection_handle(void *newSocket){
       write(socket,"hi yourself\n",13,0);
       
     }else if(!strcmp(buffer, "help")){
-      char msg[] = "quit\n
-                    kill\n
-                    hi\n
-                    ip\n
-                    help\n*";
+      char msg[] = "quit\nkill\nhi\nip\nhelp\n*";
       write(socket,msg ,strlen(msg)+1,0);
       
     }else if(!strcmp(buffer, "kill")){
