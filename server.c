@@ -8,7 +8,10 @@
 #include <libconfig.h>
 #include <pthread.h>
 #include <arpa/inet.h>
+#include <netdb.h>
+#include <ifaddrs.h>
 //#include <unistd.h>
+//#include <server_library.h>
 
 /**
 * funkcja zwraca wartosci z pliku konfiguracyjnego
@@ -75,7 +78,37 @@ void *connection_handle(void *newSocket){
         close(socket);
         free(newSocket);
         exit(1);
+    }else if(!strcmp(buffer, "ip")){
+
+struct ifaddrs *ifaddr, *ifa;
+    int family, s;
+    char host[NI_MAXHOST];
+    char msg[80] = "";
+    if (getifaddrs(&ifaddr) == -1) {
+        perror("getifaddrs");
+        exit(EXIT_FAILURE);
+    }
+
+    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+        family = ifa->ifa_addr->sa_family;
+
+        if (family == AF_INET) {
+            s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
+                                           host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+            if (s != 0) {
+                printf("getnameinfo() failed: %s\n", gai_strerror(s));
+                exit(EXIT_FAILURE);
+            }
+            //printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
+          strcat(msg,(char*)host);
+        }
+        strcat(msg,"\n");
+    }
+
+      write(socket,msg,80+1,0);
+
     }else{
+      
       write(socket,"thats nice sweety\n",17,0);
       
     }

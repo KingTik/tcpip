@@ -9,3 +9,5 @@ wykorzystywane biblioteki:
 -> libconfig    (http://www.hyperrealm.com/libconfig/)
 -> pthread
 
+sudo netstat -ap | grep :7891
+kill -9 pid
