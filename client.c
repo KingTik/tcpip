@@ -31,13 +31,15 @@ int main(int argc, char * argv[]){
     
   int i = 0;
   while(1){
+    
+    //pobranie rozkazu
     scanf("%s", buffer);
 
 
-
+    //przeslanie
     send(clientSocket,buffer,13,0);
    
-
+    //wyjscia z programu
     if( !strcmp(buffer, "quit") || !strcmp(buffer, "kill") ){
       close(clientSocket);
       return 0;
@@ -47,9 +49,9 @@ int main(int argc, char * argv[]){
         //puts("recv failed");
         break;
       }
-         
+
         puts("Server reply :");
-        puts(buffer);
+        puts(buffer); //odpowiedz serwera
   }
 
 

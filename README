@@ -1,5 +1,5 @@
 wykorzystywane biblioteki:
--> libxml       (http://www.xmlsoft.org) 
+-> libxml       (http://www.xmlsoft.org) (jeszcze nie)
         wget ftp://xmlsoft.org/libxml2/libxml2-2.8.0.tar.gz
         tar xzf libxml2-2.8.0.tar.gz
         cd libxml2-2.8.0/
@@ -9,5 +9,22 @@ wykorzystywane biblioteki:
 -> libconfig    (http://www.hyperrealm.com/libconfig/)
 -> pthread
 
+
+jezeli gniazdo nie zostalo usuniete poprawnie
 sudo netstat -ap | grep :7891
 kill -9 pid
+
+
+dodanie customowej biblioteki
+$ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/my_library/path.so.something
+$ export LD_LIBRARY_PATH
+$ ./my_app
+
+
+
+
+UZYCIE:
+dodanie biblioteki servera do LD_LIBRARY_PATH
+./server
+./client
+help

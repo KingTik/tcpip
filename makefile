@@ -1,12 +1,18 @@
-all: server client
 
+all: bib.o libbib.so server.o server clean
 
-server: server.c
-	gcc server.c -o server -l:libconfig.a -lpthread
+bib.o: server_library.c
+	gcc -c -fpic -Werror -Wall -o bib.o server_library.c
 
-client: client.c
-	gcc client.c -o client
+libbib.so: bib.o
+	gcc -shared -o libbib.so bib.o
 
+server.o: server.c 
+	gcc -c -o server.o server.c 
+
+server: server.o libbib.so
+	gcc -L/home/tomek/zaawansowane_programowanie_linux/lab2/tcpip -Wall -o server server.o -lbib -l:libconfig.a -lpthread
 
 clean:
-	rm -f server client
+	-rm -f bib.o server.o 
+

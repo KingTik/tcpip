@@ -11,13 +11,13 @@
 #include <netdb.h>
 #include <ifaddrs.h>
 //#include <unistd.h>
-//#include <server_library.h>
+#include "server_library.h"
 
 /**
 * funkcja zwraca wartosci z pliku konfiguracyjnego
 * @param const chat *c:
     - port
-    -max_client
+    - max_client
 */
 int get_int_from_settings(config_t cfg, const char *c){
   int ret_value;
@@ -31,35 +31,21 @@ int get_int_from_settings(config_t cfg, const char *c){
 
 }
 
-/*
-3 - list of commands
-2 - send back hello
-1 - quit
-0 - display
+
+/**
+
+funkcja przekazywana do kolejnych watkow w celu obslugi klienta
+@param
+newSocket - deskryptor do socketa
 
 */
-
-int message_handle(const char *message){
-
-  if( !strcmp(message, "quit") ){
-    return 1;
-  }else if(!strcmp(message, "hi")){
-    return 2;
-  }else if(!strcmp(message, "help")){
-    return 3;
-  }else{
-    return 0;
-  }
-
-}
-
-// /sbin/ifconfig $(netstat -nr | tail -1 | awk '{print $NF}') | grep -oP '(?<=inet\s)\d+(\.\d+){3}' <- ip address
 
 void *connection_handle(void *newSocket){
 
   int socket = *(int*) newSocket;
   int read_size;
   char buffer[1024];
+
 
   while( (read_size = recv(socket, buffer, 1024, 0)) >0 ){
     printf("%s\n", buffer);
@@ -70,7 +56,7 @@ void *connection_handle(void *newSocket){
     }else if(!strcmp(buffer, "hi")){
       write(socket,"hi yourself\n",13,0);
       
-    }else if(!strcmp(buffer, "help")){
+    }else if(!strcmp(buffer, "help")){ 
       char msg[] = "quit\nkill\nhi\nip\nhelp\n*";
       write(socket,msg ,strlen(msg)+1,0);
       
@@ -79,34 +65,7 @@ void *connection_handle(void *newSocket){
         free(newSocket);
         exit(1);
     }else if(!strcmp(buffer, "ip")){
-
-        struct ifaddrs *ifaddr, *ifa;
-        int family, s;
-        char host[NI_MAXHOST];
-        char msg[80] = "";
-        if (getifaddrs(&ifaddr) == -1) {
-            perror("getifaddrs");
-            exit(EXIT_FAILURE);
-        }
-
-        for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
-            family = ifa->ifa_addr->sa_family;
-
-            if (family == AF_INET) {
-                s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
-                                              host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-                if (s != 0) {
-                    printf("getnameinfo() failed: %s\n", gai_strerror(s));
-                    exit(EXIT_FAILURE);
-                }
-                //printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
-              strcat(msg,(char*)host);
-            }
-            strcat(msg,"\n");
-        }
-
-          write(socket,msg,80+1,0);
-
+        write(socket,get_ip(),80+1,0);
     }else{
       
       write(socket,"thats nice sweety\n",17,0);
@@ -144,7 +103,7 @@ int main(){
     port = get_int_from_settings(cfg, "port");
     
   }
-
+  
   printf ("port: %d   \nmaksymalna liczba klientow: %d\n", port, max_client);
 
 
@@ -204,15 +163,3 @@ int main(){
 }
 
 
-/*
-TO DO:
-
-
-- protokol
-- wystawienie interface'ow
-- zobaczyc na warningi
-- logi
-- zrobic server jako demon
-- 
-
-*/
