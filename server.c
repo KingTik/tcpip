@@ -1,5 +1,3 @@
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
@@ -10,7 +8,6 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <ifaddrs.h>
-//#include <unistd.h>
 #include "server_library.h"
 
 /**
@@ -41,7 +38,7 @@ newSocket - deskryptor do socketa
 */
 
 void *connection_handle(void *newSocket){
-
+  
   int socket = *(int*) newSocket;
   int read_size;
   char buffer[1024];
@@ -134,16 +131,13 @@ int main(){
  
   
 
-
-
-    //newSocket = accept(welcomeSocket, (struct sockaddr *) &serverStorage, &addr_size);
     addr_size = sizeof(struct sockaddr_in);
     
-
+    //glowna petla
     while( (newSocket = accept(welcomeSocket, (struct sockaddr *)&serverStorage, (socklen_t*)&addr_size)) )
     {
         
-         puts("Connection accepted");
+        puts("Connection accepted");
         pthread_t new_thread;
         thread_sock = malloc(1);
         *thread_sock = newSocket;

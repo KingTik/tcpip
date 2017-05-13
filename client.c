@@ -12,7 +12,7 @@ int main(int argc, char * argv[]){
 
 
  
-  int clientSocket, read_size;
+  int clientSocket;
   char buffer[1024];
   struct sockaddr_in serverAddr;
   socklen_t addr_size;
@@ -29,7 +29,7 @@ int main(int argc, char * argv[]){
   
   connect(clientSocket, (struct sockaddr *) &serverAddr, addr_size);
     
-  int i = 0;
+  
   while(1){
     
     //pobranie rozkazu

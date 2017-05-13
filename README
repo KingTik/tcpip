@@ -28,3 +28,11 @@ dodanie biblioteki servera do LD_LIBRARY_PATH
 ./server
 ./client
 help
+....
+
+kill - wylacza client i server
+quit - wylacza client
+help - wyswietla wszystkie dostepne komendy
+*    - odpowiada "thats nice sweety"
+hi   - odpowiada "hi yourself"
+ip   - zwraca adresy ip

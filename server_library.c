@@ -5,6 +5,12 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <ifaddrs.h>
+
+
+/**
+zwraca adresy ip
+*/
+
 char * get_ip(){
 
 	
