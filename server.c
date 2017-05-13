@@ -61,10 +61,11 @@ void *connection_handle(void *newSocket){
         close(socket);
         free(newSocket);
         exit(1);
+
     }else if(!strcmp(buffer, "ip")){
         write(socket,get_ip(),80+1,0);
+
     }else{
-      
       write(socket,"thats nice sweety\n",17,0);
       
     }
@@ -90,14 +91,22 @@ int main(){
   {
     fprintf(stderr, "%s:%d - %s\n", config_error_file(&cfg), config_error_line(&cfg), config_error_text(&cfg));
     config_destroy(&cfg);
-    printf("nie ma pliku konfiguracyjnego");
+    printf("nie ma pliku konfiguracyjnego lub nie udalo sie otworzyc\n");
     //jak nie ma to wartosci domyslne
     port = 7891;
     max_client = 3;
   }else{
     //jak jest to pobieramy wartosci z pliku konfiguracyjnego
     max_client = get_int_from_settings(cfg, "max_client");
+    if(max_client == -1){
+      max_client = 3;
+      printf("nie udalo sie pobrac maksymalnej liczby klientow z pliku konfiguracyjnego\n");
+    }
     port = get_int_from_settings(cfg, "port");
+    if(port ==-1){
+       port = 7891;
+       printf("nie udalo sie pobrac portu z pliku konfiguracyjnego\n");
+    }
     
   }
   
@@ -124,33 +133,33 @@ int main(){
   
   bind(welcomeSocket, (struct sockaddr *) &serverAddr, sizeof(serverAddr));
   
-    if(listen(welcomeSocket,max_client)==0)
-      printf("Listening\n");
-    else
-      printf("Error\n");
- 
+  if(listen(welcomeSocket,max_client)==0)
+    printf("Listening\n");
+  else
+    printf("Error\n");
+
+
+
+  addr_size = sizeof(struct sockaddr_in);
   
-
-    addr_size = sizeof(struct sockaddr_in);
-    
-    //glowna petla
-    while( (newSocket = accept(welcomeSocket, (struct sockaddr *)&serverStorage, (socklen_t*)&addr_size)) )
-    {
+  //glowna petla
+  while( (newSocket = accept(welcomeSocket, (struct sockaddr *)&serverStorage, (socklen_t*)&addr_size)) )
+  {
+      
+      puts("Connection accepted");
+      pthread_t new_thread;
+      thread_sock = malloc(1);
+      *thread_sock = newSocket;
         
-        puts("Connection accepted");
-        pthread_t new_thread;
-        thread_sock = malloc(1);
-        *thread_sock = newSocket;
-         
-        if( pthread_create( &new_thread , NULL ,  connection_handle , (void*) thread_sock) < 0)
-        {
-            perror("could not create thread");
-            return 1;
-        }
-         
-
+      if( pthread_create( &new_thread , NULL ,  connection_handle , (void*) thread_sock) < 0)
+      {
+          perror("could not create thread");
+          return 1;
+      }
         
-    }
+
+      
+  }
   
   
   return 0;
